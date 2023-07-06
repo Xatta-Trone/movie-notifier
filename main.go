@@ -4,6 +4,7 @@ import (
 	"log"
 	"movie-notifier/db"
 	"movie-notifier/handlers"
+	"movie-notifier/scheduler"
 	"net/http"
 	"os"
 	"runtime"
@@ -11,7 +12,6 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 )
-
 
 func main() {
 	// load env
@@ -25,15 +25,19 @@ func main() {
 	// Migrate the schema
 	db.MigrateDb(database)
 
+	// test scrapper
+	// scrapper.ScrapFreeDrive()
+	scheduler.RunScheduler(database)
+
 	// init http server
 	e := echo.New()
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	e.GET("/trackers",handlers.GetTrackers)
-	e.POST("/trackers",handlers.CreateTracker)
-	e.DELETE("/trackers/:id",handlers.DeleteTracker)
+	e.GET("/trackers", handlers.GetTrackers)
+	e.POST("/trackers", handlers.CreateTracker)
+	e.DELETE("/trackers/:id", handlers.DeleteTracker)
 
 	// windows fix
 	URL := ""
@@ -51,5 +55,3 @@ func main() {
 
 	e.Logger.Fatal(e.Start(URL))
 }
-
-
