@@ -41,7 +41,7 @@ func ScrapFreeDrive(model entities.Tracker, db *gorm.DB) {
 
 	if len(results) > 0 {
 		dataToUpdate := entities.Tracker{}
-		db.First(&dataToUpdate,model.ID)
+		db.First(&dataToUpdate, model.ID)
 		// fmt.Print(dataToUpdate)
 		dataToUpdate.IsParsed = true
 		db.Save(&dataToUpdate)

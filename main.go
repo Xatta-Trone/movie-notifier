@@ -11,6 +11,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
+	"github.com/robfig/cron/v3"
 )
 
 func main() {
@@ -27,7 +28,11 @@ func main() {
 
 	// test scrapper
 	// scrapper.ScrapFreeDrive()
-	scheduler.RunScheduler(database)
+	// scheduler.RunScheduler(database)
+	// run cron
+	c := cron.New()
+	c.AddFunc("@every 6h", func() { scheduler.RunScheduler(database) })
+	c.Start()
 
 	// init http server
 	e := echo.New()
