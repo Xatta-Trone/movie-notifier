@@ -31,6 +31,7 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
+	e.GET("/trackers",handlers.GetTrackers)
 	e.POST("/trackers",handlers.CreateTracker)
 	e.DELETE("/trackers/:id",handlers.DeleteTracker)
 
