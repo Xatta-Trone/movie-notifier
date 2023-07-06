@@ -2,21 +2,16 @@ package main
 
 import (
 	"log"
+	"movie-notifier/db"
+	"movie-notifier/handlers"
 	"net/http"
 	"os"
 	"runtime"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
-type Product struct {
-	gorm.Model
-	Code  string
-	Price uint
-}
 
 func main() {
 	// load env
@@ -26,20 +21,18 @@ func main() {
 	}
 
 	// init db
-	db := InitDB()
-
+	database := db.InitDB()
 	// Migrate the schema
-	db.AutoMigrate(&Product{})
-
-	// Create
-	db.Create(&Product{Code: "D42", Price: 100})
+	db.MigrateDb(database)
 
 	// init http server
-
 	e := echo.New()
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
+
+	e.POST("/trackers",handlers.CreateTracker)
+	e.DELETE("/trackers/:id",handlers.DeleteTracker)
 
 	// windows fix
 	URL := ""
@@ -58,13 +51,4 @@ func main() {
 	e.Logger.Fatal(e.Start(URL))
 }
 
-func InitDB() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("database.sqlite"), &gorm.Config{})
-	// fmt.Println(db)
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	return db
-
-}
