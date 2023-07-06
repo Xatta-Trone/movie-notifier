@@ -59,7 +59,7 @@ func main() {
 }
 
 func InitDB() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("database.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("database.sqlite"), &gorm.Config{})
 	// fmt.Println(db)
 	if err != nil {
 		log.Fatal(err)
