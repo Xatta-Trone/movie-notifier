@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -60,9 +59,11 @@ func main() {
 }
 
 func InitDB() *gorm.DB {
-	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
-	fmt.Println(err)
-	fmt.Println(db)
+	db, err := gorm.Open(sqlite.Open("database.db"), &gorm.Config{})
+	// fmt.Println(db)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	return db
 
