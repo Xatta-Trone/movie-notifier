@@ -31,7 +31,7 @@ func main() {
 	// scheduler.RunScheduler(database)
 	// run cron
 	c := cron.New()
-	c.AddFunc("@every 6h", func() { scheduler.RunScheduler(database) })
+	c.AddFunc("@every 1h", func() { scheduler.RunScheduler(database) })
 	c.Start()
 
 	// init http server
