@@ -5,6 +5,7 @@ import (
 	"movie-notifier/entities"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -50,6 +51,8 @@ func CreateTracker(c echo.Context) error {
 		response := map[string]interface{}{"errors": "please enter the keyword"}
 		return c.JSON(http.StatusBadRequest, &response)
 	}
+
+	keyword = strings.ToLower(keyword)
 
 	// create instance
 	tracker := entities.Tracker{Keyword: keyword}

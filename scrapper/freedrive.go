@@ -5,8 +5,12 @@ import (
 	"log"
 	"movie-notifier/entities"
 	"net/http"
+	"os"
+	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/disgoorg/disgo/discord"
+	"github.com/disgoorg/disgo/webhook"
 	"github.com/gen2brain/beeep"
 	"gorm.io/gorm"
 )
@@ -34,8 +38,15 @@ func ScrapFreeDrive(model entities.Tracker, db *gorm.DB) {
 	// Find the review items
 	doc.Find(".result-item").Each(func(i int, s *goquery.Selection) {
 		// For each item found, get the title
-		url := s.Find(".title").Find("a").First().AttrOr("href", "")
-		results = append(results, url)
+		title := s.Find(".title").Text()
+		title = strings.ToLower(title)
+
+		fmt.Println(title)
+
+		if strings.Contains(title, model.Keyword) {
+			url := s.Find(".title").Find("a").First().AttrOr("href", "")
+			results = append(results, url)
+		}
 
 	})
 
@@ -46,6 +57,28 @@ func ScrapFreeDrive(model entities.Tracker, db *gorm.DB) {
 		dataToUpdate.IsParsed = true
 		db.Save(&dataToUpdate)
 		beeep.Notify("Movie found", fmt.Sprintf("Found the movie %s on FreeDrive", model.Keyword), "./img/icon.png")
+		// notify discord
+		url := os.Getenv("DISCORD_WEBHOOK_URL")
+
+		if url == "" {
+			url = "https://discord.com/api/webhooks/1126691142998691970/0CaBol5svSc8oe7UBhTdesfgDK34eh7ijrkQoQAcLSknwDe72PkxaWWSLxj4j3XnOWeC"
+		}
+
+		client, err := webhook.NewWithURL(url)
+
+		if err != nil {
+			return
+		}
+
+		msg := fmt.Sprintf("Found the movie %s on FreeDrive", model.Keyword)
+
+		_, err = client.CreateMessage(discord.WebhookMessageCreate{
+			Content: msg,
+		})
+
+		if err != nil {
+			return
+		}
 	}
 
 	fmt.Println("scrap results ===============")
