@@ -49,7 +49,7 @@ func main() {
 	PORT := os.Getenv("PORT")
 
 	if PORT == "" {
-		PORT = "1323"
+		PORT = "1112"
 	}
 
 	if runtime.GOOS == "windows" {
