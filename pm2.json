@@ -1,0 +1,8 @@
+{
+  "apps": [
+    {
+      "name": "movie-notifier",
+      "script": "./movie-notifier.exe"
+    }
+  ]
+}
